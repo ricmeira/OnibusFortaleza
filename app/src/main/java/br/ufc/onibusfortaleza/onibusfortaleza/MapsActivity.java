@@ -56,7 +56,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney2"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 
@@ -112,7 +112,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         EditText dest=(EditText)findViewById(R.id.editTextDestiny);
 
         GetRouteAsyncTask getRouteAsyncTask = new GetRouteAsyncTask();
-        String json = getRouteAsyncTask.execute(origin.getText().toString(),dest.getText().toString());
+        //String json = getRouteAsyncTask.execute(origin.getText().toString(),dest.getText().toString());
 
 
     }
