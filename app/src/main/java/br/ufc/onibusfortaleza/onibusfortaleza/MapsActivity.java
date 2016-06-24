@@ -1,5 +1,6 @@
 package br.ufc.onibusfortaleza.onibusfortaleza;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.v4.app.ActivityCompat;
@@ -7,6 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -19,15 +21,19 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.List;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private GoogleMap mMap;
     private GoogleApiClient googleApiClient;
+    private RouteDAO routeDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        routeDAO = new RouteDAO(this);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -115,6 +121,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //String json = getRouteAsyncTask.execute(origin.getText().toString(),dest.getText().toString());
 
 
+    }
+
+    public void history(View view){
+        List<Route> routes = routeDAO.list();
+        if(routes != null) {
+            Intent i = new Intent();
+            i.setAction("br.ufc.dc.dspm.action.history");
+            i.setComponent(null);
+            i.addCategory("br.ufc.dc.dspm.category.Categoria");
+            i.setComponent(null);
+            startActivity(i);
+        } else {
+            Toast.makeText(getApplicationContext(), "0 Notes", Toast.LENGTH_SHORT).show();
+        }
     }
 
 }
