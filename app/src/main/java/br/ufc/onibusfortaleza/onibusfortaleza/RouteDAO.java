@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class RouteDAO extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "MyRoutes.db";
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
 
     public RouteDAO(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -32,6 +32,8 @@ public class RouteDAO extends SQLiteOpenHelper {
         sql.append("id integer primary key autoincrement,");
         sql.append("origin text,");
         sql.append("destiny text,");
+        sql.append("onibus text,");
+        sql.append("rota text);");
         db.execSQL(sql.toString());
     }
 
@@ -46,6 +48,8 @@ public class RouteDAO extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put("origin", route.getOrigin());
         contentValues.put("destiny", route.getDestiny());
+        contentValues.put("onibus", route.getBusName());
+        contentValues.put("rota", route.getRoute());
         long id = db.insert("routes", null, contentValues);
         Log.v("SQLite", "create id = " + id);
     }
@@ -63,6 +67,8 @@ public class RouteDAO extends SQLiteOpenHelper {
             route.setId(result.getInt(0));
             route.setOrigin(result.getString(1));
             route.setDestiny(result.getString(2));
+            route.setBusName(result.getString(3));
+            route.setRoute(result.getString(4));
         }
         return route;
     }
@@ -95,6 +101,8 @@ public class RouteDAO extends SQLiteOpenHelper {
                 route.setId(result.getInt(0));
                 route.setOrigin(result.getString(1));
                 route.setDestiny(result.getString(2));
+                route.setBusName(result.getString(3));
+                route.setRoute(result.getString(4));
                 routes.add(route);
                 result.moveToNext();
             }

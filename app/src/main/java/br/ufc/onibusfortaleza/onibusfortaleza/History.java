@@ -42,13 +42,15 @@ public class History extends AppCompatActivity {
                             i++;
                         }
                         Intent intent = new Intent();
-                        intent.setAction("br.ufc.dc.dspm.action.MAIN");
+                        intent.setAction("br.ufc.dc.dspm.action.main");
                         intent.setComponent(null);
-                        intent.addCategory("br.ufc.dc.dspm.category.LAUNCHER");
+                        intent.addCategory("br.ufc.dc.dspm.category.CategoriaMain");
                         intent.setComponent(null);
-                        intent.putExtra("position", r.getId());
+                        intent.putExtra("id", r.getId());
                         intent.putExtra("origin", r.getOrigin());
                         intent.putExtra("destiny", r.getDestiny());
+                        intent.putExtra("bus", r.getBusName());
+                        intent.putExtra("route", r.getRoute());
                         startActivity(intent);
                     }
                 });

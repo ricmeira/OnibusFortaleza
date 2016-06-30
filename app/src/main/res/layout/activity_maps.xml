@@ -13,28 +13,75 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="br.ufc.onibusfortaleza.onibusfortaleza.MapsActivity" />
+        tools:context="br.ufc.onibusfortaleza.onibusfortaleza.MapsActivity"
+        android:layout_marginBottom="50dp" />
 
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Poe a porra da origem"
-        android:id="@+id/editTextOrigin" />
+        android:hint="Origem"
+        android:id="@+id/editTextOrigin"
+        android:background="#ffffff"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:minHeight="40dp"
+        android:alpha="0.9"
+        android:layout_toLeftOf="@+id/buttonHistory"
+        android:layout_toStartOf="@+id/buttonHistory" />
 
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="poe a porra do destino"
+        android:hint="Destino"
         android:layout_below="@id/editTextOrigin"
-        android:id="@+id/editTextDestiny" />
+        android:id="@+id/editTextDestiny"
+        android:background="#ffffff"
+        android:layout_marginLeft="10dp"
+        android:minHeight="40dp"
+        android:alpha="0.9"
+        android:layout_toLeftOf="@+id/button"
+        android:layout_toStartOf="@+id/button" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/editTextDestiny"
         android:onClick="calcularRota"
-        android:text="Checar Onibus"
-        android:id="@+id/button" />
+        android:text="Buscar Ônibus"
+        android:id="@+id/button"
+        android:layout_alignLeft="@+id/buttonHistory"
+        android:layout_alignStart="@+id/buttonHistory"
+        android:layout_alignBottom="@+id/editTextDestiny"
+        android:layout_below="@+id/editTextOrigin" />
 
+    <Spinner
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinnerBusOptions"
+        android:layout_alignParentBottom="true"
+        android:spinnerMode="dialog"
+        android:minHeight="50dp"
+        android:layout_toEndOf="@+id/buttonSave"
+        android:layout_toRightOf="@+id/buttonSave" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:id="@+id/buttonSave"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:onClick="save"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Historico"
+        android:onClick="history"
+        android:id="@+id/buttonHistory"
+        android:layout_alignTop="@+id/editTextOrigin"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

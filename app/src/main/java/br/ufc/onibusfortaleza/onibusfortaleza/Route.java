@@ -7,6 +7,8 @@ public class Route {
     private int id;
     private String origin;
     private String destiny;
+    private String busName;
+    private String route;
 
     public int getId() {
         return id;
@@ -30,6 +32,22 @@ public class Route {
 
     public void setDestiny(String destiny) {
         this.destiny = destiny;
+    }
+
+    public String getBusName() {
+        return busName;
+    }
+
+    public void setBusName(String busName) {
+        this.busName = busName;
+    }
+
+    public String getRoute() {
+        return route;
+    }
+
+    public void setRoute(String route) {
+        this.route = route;
     }
 
     @Override

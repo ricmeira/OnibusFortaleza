@@ -7,7 +7,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -23,6 +25,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.PolyUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
@@ -30,11 +33,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private GoogleApiClient googleApiClient;
     private RouteDAO routeDAO;
+    private Spinner spinnerBusOptions;
+    private ArrayList<String> busOption;
+    private ArrayAdapter<String> spinnerAdapter;
+    private Route rotaAtual = null;
 
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        Intent intent =getIntent();
+        if(intent.getStringExtra("bus") != null){
+            Toast.makeText(this,"bus not null",Toast.LENGTH_SHORT).show();
+            //TODO PEGAR DADOS
+        }
+
         routeDAO = new RouteDAO(this);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -46,6 +59,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         builder.addConnectionCallbacks(this);
         builder.addOnConnectionFailedListener(this);
         googleApiClient = builder.build();
+
+
+        busOption = new ArrayList<String>(){{add("caralho");}};
+        spinnerBusOptions = (Spinner) findViewById(R.id.spinnerBusOptions);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        spinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, busOption);
+// Specify the layout to use when the list of choices appears
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+// Apply the adapter to the spinner
+        spinnerBusOptions.setAdapter(spinnerAdapter);
+
     }
 
 
@@ -141,6 +165,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             startActivity(i);
         } else {
             Toast.makeText(getApplicationContext(), "0 Notes", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void save(View view){
+
+        if(rotaAtual !=null){
+            Route route = new Route();
+            route.setBusName("Varjota");
+            route.setDestiny("Casa do Caralho");
+            route.setOrigin("Inferno");
+            route.setRoute("Fim do mundo");
+            routeDAO.create(route);
+
+            Toast.makeText(this,"A rota foi salva com sucesso",Toast.LENGTH_SHORT).show();
         }
     }
 
