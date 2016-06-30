@@ -20,6 +20,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.PolyUtil;
 
 import java.util.List;
 
@@ -62,8 +64,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney2"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney2"));
+        //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
     }
 
     @Override
@@ -94,6 +97,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
         LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
 
+        System.out.print("entrou");
         mMap.addMarker(new MarkerOptions().position(latLng).title("Im here"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
     }
@@ -118,10 +122,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         EditText dest=(EditText)findViewById(R.id.editTextDestiny);
 
         GetRouteAsyncTask getRouteAsyncTask = new GetRouteAsyncTask();
-        //String json = getRouteAsyncTask.execute(origin.getText().toString(),dest.getText().toString());
+        getRouteAsyncTask.execute(origin.getText().toString(),dest.getText().toString());
+
+        mMap.addPolyline(new PolylineOptions().addAll(PolyUtil.decode("b_xUbn~iFg@|Bw@bEoEaAy@Q_A`EOh@o@rCaAvE_AbEERzGxAvBd@dDt@~GzAnE~@nCl@j@NbFhAtBd@p@N~D|@tA\\RDfB`@t@NxIlBi@`CUjAeAzEcAtES`Ao@vCa@nBi@|BGZy@rDaAtEcArE[tAe@|B_AjEcArEaArEm@pCU~@gA~ECPw@vDEPk@lC{@xDg@hCWfAS~@w@rDrCn@x@RzCr@q@tCa@dBi@hC_A~DXFYGgCrIuCeCgCoBc@pBm@lCw@rDGT{@xDCPxIhBcAnEaAzEeBhEcAtEYpAQr@o@`C{Cl@aD\\]BFb@lArJN~@JdA^pCNRVjBXtBAn@Fd@r@zF^|C`@bD`@dD\\bDNPThB@FRzAAr@vAvKd@hDLTJz@@JJz@A`@@Lj@xEl@~EdAlIP|ALJPrA")));
 
 
     }
+
 
     public void history(View view){
         List<Route> routes = routeDAO.list();

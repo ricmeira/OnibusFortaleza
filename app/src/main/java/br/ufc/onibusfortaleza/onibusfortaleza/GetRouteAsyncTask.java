@@ -1,6 +1,7 @@
 package br.ufc.onibusfortaleza.onibusfortaleza;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -19,14 +20,20 @@ public class GetRouteAsyncTask extends AsyncTask<String, String, String> {
         try {
             String origin = params[0];
             String dest = params[1];
-
-            String directionsUrl = "https://maps.googleapis.com/maps/api/directions/json?origin="+origin+"&destination="+dest+"&mode=transit&key=AIzaSyAEXVH95CyyTHZE9dle3My_2J_yyo0xcxo";
+            origin=origin.replace(" ","%20");
+            dest=dest.replace(" ","%20");
+            String directionsUrl = "https://maps.googleapis.com/maps/api/directions/json?origin="+origin+"&destination="+dest+"&alternatives=true&mode=transit&key=AIzaSyAEXVH95CyyTHZE9dle3My_2J_yyo0xcxo";
             //connection
             URL url = new URL(directionsUrl);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection(); conn.setReadTimeout(10000);
             conn.setConnectTimeout(15000);
             conn.setRequestMethod("GET");
-            conn.setDoInput(true);
+            conn.setRequestProperty("Content-length", "0");
+            conn.setUseCaches(false);
+            conn.setAllowUserInteraction(false);
+            //conn.setConnectTimeout(timeout);
+            //conn.setReadTimeout(timeout);
+
             conn.connect();
             //read content
             InputStream is = conn.getInputStream();
@@ -36,10 +43,15 @@ public class GetRouteAsyncTask extends AsyncTask<String, String, String> {
             while ((data = reader.readLine()) != null) {
                 content += data + "\n";
             }
-            return content;
+            content.replace(" ","%20");
+            parseJson(content);
+            Log.e("async",content);
+
+            //return content;
         } catch (Exception e) {
-            return new String("Exception: " + e.getMessage());
+            e.printStackTrace();
         }
+        return null;
     }
     protected void onProgressUpdate(String result) {
 
@@ -49,4 +61,7 @@ public class GetRouteAsyncTask extends AsyncTask<String, String, String> {
 
     }
 
+    protected void parseJson(String json){
+
+    }
 }
