@@ -1,8 +1,11 @@
 package br.ufc.onibusfortaleza.onibusfortaleza;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -200,8 +203,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     public void history(View view){
-        List<Route> routes = routeDAO.list();
-        if(routes != null) {
+
+        //ACESSANDO VIA DAO
+        //List<Route> routes = routeDAO.list();
+
+        //ACESSANDO VIA CONTENTPROVIDER
+        final List<Route> routes = new ArrayList<Route>();
+        StringBuffer buffer = new StringBuffer();
+        String URI = RouteProvider.URI;
+        Uri routesURI = Uri.parse(URI);
+        Cursor cursor = getContentResolver().query(routesURI, null, null, null, RouteProvider.ID);
+        if (cursor.moveToFirst()) {
+            do {
+                Route route = new Route();
+                route.setId(cursor.getInt(cursor.getColumnIndex(RouteProvider.ID)));
+                route.setOrigin(cursor.getString(cursor.getColumnIndex(RouteProvider.ORIGIN)));
+                route.setDestiny(cursor.getString(cursor.getColumnIndex(RouteProvider.DESTINY)));
+                route.setBusName(cursor.getString(cursor.getColumnIndex(RouteProvider.BUS)));
+                route.setRoute(cursor.getString(cursor.getColumnIndex(RouteProvider.ROTA)));
+                routes.add(route);
+            } while (cursor.moveToNext());
+        }
+
+        //IGUAL para ambos os casos = modificar o if para routes!=null caso usando DAO
+        if(routes.size()>0) {
             Intent i = new Intent();
             i.setAction("br.ufc.dc.dspm.action.history");
             i.setComponent(null);
@@ -214,12 +239,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void save(View view){
-
+    /*
         if(rotaAtual !=null){
             routeDAO.create(rotaAtual);
 
             Toast.makeText(this,"A rota foi salva com sucesso",Toast.LENGTH_SHORT).show();
         }
+        */
+        if(rotaAtual !=null){
+
+            //USANDO DAO
+            /*
+            routeDAO.create(rotaAtual);
+
+            Toast.makeText(this,"A rota foi salva com sucesso",Toast.LENGTH_SHORT).show();
+            */
+
+            //USANDO CONTENTPROVIDER
+            ContentValues values = new ContentValues();
+            values.put(RouteProvider.ORIGIN, rotaAtual.getOrigin());
+            values.put(RouteProvider.DESTINY, rotaAtual.getDestiny());
+            values.put(RouteProvider.BUS, rotaAtual.getBusName());
+            values.put(RouteProvider.ROTA, rotaAtual.getRoute());
+
+            Uri uri = getContentResolver().insert(RouteProvider.CONTENT_URI, values);
+            Toast.makeText(this,"A rota foi salva com sucesso",Toast.LENGTH_SHORT).show();
+        }
+
     }
 
 }
