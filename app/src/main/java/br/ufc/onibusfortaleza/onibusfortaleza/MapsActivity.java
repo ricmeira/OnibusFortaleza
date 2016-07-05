@@ -42,6 +42,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        GetRouteAsyncTask getRouteAsyncTask = new GetRouteAsyncTask();
+        getRouteAsyncTask.execute("Rua André Chaves, 119", "Avenida da Universidade");
+
         Intent intent =getIntent();
         if(intent.getStringExtra("bus") != null){
             Toast.makeText(this,"bus not null",Toast.LENGTH_SHORT).show();
@@ -142,6 +145,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void calcularRota(View view){
+
+
         EditText origin=(EditText)findViewById(R.id.editTextOrigin);
         EditText dest=(EditText)findViewById(R.id.editTextDestiny);
 

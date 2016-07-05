@@ -3,11 +3,15 @@ package br.ufc.onibusfortaleza.onibusfortaleza;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import br.ufc.onibusfortaleza.onibusfortaleza.model.ApiResponse;
 
 /**
  * Created by eduardo on 16-06-22.
@@ -62,6 +66,7 @@ public class GetRouteAsyncTask extends AsyncTask<String, String, String> {
     }
 
     protected void parseJson(String json){
-
+        Gson gson = new Gson();
+        ApiResponse routes = gson.fromJson(json, ApiResponse.class);
     }
 }
