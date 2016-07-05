@@ -27,6 +27,7 @@
         android:layout_marginBottom="5dp"
         android:minHeight="40dp"
         android:alpha="0.9"
+        android:text="Dom Luis 300"
         android:layout_toLeftOf="@+id/buttonHistory"
         android:layout_toStartOf="@+id/buttonHistory" />
 
@@ -40,6 +41,7 @@
         android:layout_marginLeft="10dp"
         android:minHeight="40dp"
         android:alpha="0.9"
+        android:text="Campus do Pici"
         android:layout_toLeftOf="@+id/button"
         android:layout_toStartOf="@+id/button" />
 

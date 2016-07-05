@@ -42,9 +42,9 @@ public class History extends AppCompatActivity {
                             i++;
                         }
                         Intent intent = new Intent();
-                        intent.setAction("br.ufc.dc.dspm.action.main");
+                        intent.setAction("br.ufc.dc.dspm.action.maps");
                         intent.setComponent(null);
-                        intent.addCategory("br.ufc.dc.dspm.category.CategoriaMain");
+                        intent.addCategory("br.ufc.dc.dspm.category.Cate");
                         intent.setComponent(null);
                         intent.putExtra("id", r.getId());
                         intent.putExtra("origin", r.getOrigin());

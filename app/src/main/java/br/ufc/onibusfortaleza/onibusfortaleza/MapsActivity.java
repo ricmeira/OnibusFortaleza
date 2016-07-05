@@ -3,10 +3,12 @@ package br.ufc.onibusfortaleza.onibusfortaleza;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -34,22 +36,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleApiClient googleApiClient;
     private RouteDAO routeDAO;
     private Spinner spinnerBusOptions;
-    private ArrayList<String> busOption;
-    private ArrayAdapter<String> spinnerAdapter;
+    private ArrayList<Route> busOption;
+    private ArrayAdapter<Route> spinnerAdapter;
     private Route rotaAtual = null;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        GetRouteAsyncTask getRouteAsyncTask = new GetRouteAsyncTask();
-        getRouteAsyncTask.execute("Rua André Chaves, 119", "Avenida da Universidade");
+        //GetRouteAsyncTask getRouteAsyncTask = new GetRouteAsyncTask();
+        //getRouteAsyncTask.execute("Rua André Chaves, 119", "Avenida da Universidade");
 
-        Intent intent =getIntent();
-        if(intent.getStringExtra("bus") != null){
-            Toast.makeText(this,"bus not null",Toast.LENGTH_SHORT).show();
-            //TODO PEGAR DADOS
-        }
 
         routeDAO = new RouteDAO(this);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -64,14 +61,57 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         googleApiClient = builder.build();
 
 
-        busOption = new ArrayList<String>(){{add("caralho");}};
+        busOption = new ArrayList<Route>();
         spinnerBusOptions = (Spinner) findViewById(R.id.spinnerBusOptions);
         // Create an ArrayAdapter using the string array and a default spinner layout
-        spinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, busOption);
+        spinnerAdapter = new ArrayAdapter<Route>(this, android.R.layout.simple_spinner_item, busOption);
 // Specify the layout to use when the list of choices appears
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 // Apply the adapter to the spinner
         spinnerBusOptions.setAdapter(spinnerAdapter);
+
+
+        //get Intent
+        Intent intent = getIntent();
+        if(intent.getStringExtra("bus") != null){
+            Route rota = new Route();
+            String dest = intent.getStringExtra("destiny");
+            String ori = intent.getStringExtra("origin");
+            String route = intent.getStringExtra("route");
+            String bus = intent.getStringExtra("bus");
+
+            rota.setBusName(bus);
+            rota.setRoute(route);
+            rota.setOrigin(ori);
+            rota.setDestiny(dest);
+            
+            spinnerAdapter.clear();
+            spinnerAdapter.add(rota);
+
+            EditText origin=(EditText)findViewById(R.id.editTextOrigin);
+            EditText destin=(EditText)findViewById(R.id.editTextDestiny);
+            origin.setText(ori.toString());
+            destin.setText(dest.toString());
+
+        }
+
+        //Listener
+        spinnerBusOptions.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                rotaAtual = spinnerAdapter.getItem(position);
+                mMap.clear();
+
+                Log.e("OnItem",rotaAtual.toString());
+                mMap.addPolyline(new PolylineOptions().addAll(PolyUtil.decode(rotaAtual.getRoute())));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+            }
+
+        });
+
 
     }
 
@@ -150,10 +190,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         EditText origin=(EditText)findViewById(R.id.editTextOrigin);
         EditText dest=(EditText)findViewById(R.id.editTextDestiny);
 
-        GetRouteAsyncTask getRouteAsyncTask = new GetRouteAsyncTask();
+        GetRouteAsyncTask getRouteAsyncTask = new GetRouteAsyncTask(mMap,spinnerAdapter);
         getRouteAsyncTask.execute(origin.getText().toString(),dest.getText().toString());
 
-        mMap.addPolyline(new PolylineOptions().addAll(PolyUtil.decode("b_xUbn~iFg@|Bw@bEoEaAy@Q_A`EOh@o@rCaAvE_AbEERzGxAvBd@dDt@~GzAnE~@nCl@j@NbFhAtBd@p@N~D|@tA\\RDfB`@t@NxIlBi@`CUjAeAzEcAtES`Ao@vCa@nBi@|BGZy@rDaAtEcArE[tAe@|B_AjEcArEaArEm@pCU~@gA~ECPw@vDEPk@lC{@xDg@hCWfAS~@w@rDrCn@x@RzCr@q@tCa@dBi@hC_A~DXFYGgCrIuCeCgCoBc@pBm@lCw@rDGT{@xDCPxIhBcAnEaAzEeBhEcAtEYpAQr@o@`C{Cl@aD\\]BFb@lArJN~@JdA^pCNRVjBXtBAn@Fd@r@zF^|C`@bD`@dD\\bDNPThB@FRzAAr@vAvKd@hDLTJz@@JJz@A`@@Lj@xEl@~EdAlIP|ALJPrA")));
+        //mMap.addPolyline(new PolylineOptions().addAll(PolyUtil.decode("b_xUbn~iFg@|Bw@bEoEaAy@Q_A`EOh@o@rCaAvE_AbEERzGxAvBd@dDt@~GzAnE~@nCl@j@NbFhAtBd@p@N~D|@tA\\RDfB`@t@NxIlBi@`CUjAeAzEcAtES`Ao@vCa@nBi@|BGZy@rDaAtEcArE[tAe@|B_AjEcArEaArEm@pCU~@gA~ECPw@vDEPk@lC{@xDg@hCWfAS~@w@rDrCn@x@RzCr@q@tCa@dBi@hC_A~DXFYGgCrIuCeCgCoBc@pBm@lCw@rDGT{@xDCPxIhBcAnEaAzEeBhEcAtEYpAQr@o@`C{Cl@aD\\]BFb@lArJN~@JdA^pCNRVjBXtBAn@Fd@r@zF^|C`@bD`@dD\\bDNPThB@FRzAAr@vAvKd@hDLTJz@@JJz@A`@@Lj@xEl@~EdAlIP|ALJPrA")));
 
 
     }
@@ -176,12 +216,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void save(View view){
 
         if(rotaAtual !=null){
-            Route route = new Route();
-            route.setBusName("Varjota");
-            route.setDestiny("Casa do Caralho");
-            route.setOrigin("Inferno");
-            route.setRoute("Fim do mundo");
-            routeDAO.create(route);
+            routeDAO.create(rotaAtual);
 
             Toast.makeText(this,"A rota foi salva com sucesso",Toast.LENGTH_SHORT).show();
         }
