@@ -52,11 +52,11 @@ public class Route {
 
     @Override
     public String toString() {
-        return "Route{" +
+        /*return "Route{" +
                 "id=" + id +
                 ", origin='" + origin + '\'' +
                 ", destiny='" + destiny + '\'' +
-                '}';
-        //return "zchonark";
+                '}';*/
+        return getBusName();
     }
 }

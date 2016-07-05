@@ -5,7 +5,9 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.Gson;
+import com.google.maps.android.PolyUtil;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -89,6 +91,8 @@ public class GetRouteAsyncTask extends AsyncTask<String, String, String> {
                 adapter.notifyDataSetChanged();
                 //map.addPolyline(new PolylineOptions().addAll(PolyUtil.decode(routes.getRoutes().get(i).getOverview_polyline().getPoints())));
             }
+            map.clear();
+            map.addPolyline(new PolylineOptions().addAll(PolyUtil.decode(routes.getRoutes().get(0).getOverview_polyline().getPoints())));
         }
         //map.addPolyline(new PolylineOptions().addAll(PolyUtil.decode("b_xUbn~iFg@|Bw@bEoEaAy@Q_A`EOh@o@rCaAvE_AbEERzGxAvBd@dDt@~GzAnE~@nCl@j@NbFhAtBd@p@N~D|@tA\\RDfB`@t@NxIlBi@`CUjAeAzEcAtES`Ao@vCa@nBi@|BGZy@rDaAtEcArE[tAe@|B_AjEcArEaArEm@pCU~@gA~ECPw@vDEPk@lC{@xDg@hCWfAS~@w@rDrCn@x@RzCr@q@tCa@dBi@hC_A~DXFYGgCrIuCeCgCoBc@pBm@lCw@rDGT{@xDCPxIhBcAnEaAzEeBhEcAtEYpAQr@o@`C{Cl@aD\\]BFb@lArJN~@JdA^pCNRVjBXtBAn@Fd@r@zF^|C`@bD`@dD\\bDNPThB@FRzAAr@vAvKd@hDLTJz@@JJz@A`@@Lj@xEl@~EdAlIP|ALJPrA")));
     }

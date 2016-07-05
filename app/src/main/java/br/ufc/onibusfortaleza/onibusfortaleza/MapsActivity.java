@@ -84,7 +84,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             rota.setRoute(route);
             rota.setOrigin(ori);
             rota.setDestiny(dest);
-            
+
             spinnerAdapter.clear();
             spinnerAdapter.add(rota);
 
