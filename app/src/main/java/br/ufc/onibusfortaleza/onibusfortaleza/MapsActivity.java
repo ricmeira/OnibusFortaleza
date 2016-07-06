@@ -3,18 +3,26 @@ package br.ufc.onibusfortaleza.onibusfortaleza;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -42,16 +50,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ArrayList<Route> busOption;
     private ArrayAdapter<Route> spinnerAdapter;
     private Route rotaAtual = null;
+    private ProgressBar progressBar;
+    private EditText origin;
+    private EditText destiny;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        //GetRouteAsyncTask getRouteAsyncTask = new GetRouteAsyncTask();
-        //getRouteAsyncTask.execute("Rua André Chaves, 119", "Avenida da Universidade");
-
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        origin = (EditText)findViewById(R.id.editTextOrigin);
+        destiny = (EditText)findViewById(R.id.editTextDestiny);
+        destiny.requestFocus();
 
         routeDAO = new RouteDAO(this);
+
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -68,13 +82,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         spinnerBusOptions = (Spinner) findViewById(R.id.spinnerBusOptions);
         // Create an ArrayAdapter using the string array and a default spinner layout
         spinnerAdapter = new ArrayAdapter<Route>(this, android.R.layout.simple_spinner_item, busOption);
-// Specify the layout to use when the list of choices appears
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-// Apply the adapter to the spinner
+        // Specify the layout to use when the list of choices appears
+        spinnerAdapter.setDropDownViewResource(R.layout.multiline_spinner_dropdown);
+        // Apply the adapter to the spinner
         spinnerBusOptions.setAdapter(spinnerAdapter);
 
 
-        //get Intent
+        //get Intent History
         Intent intent = getIntent();
         if(intent.getStringExtra("bus") != null){
             Route rota = new Route();
@@ -91,14 +105,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             spinnerAdapter.clear();
             spinnerAdapter.add(rota);
 
-            EditText origin=(EditText)findViewById(R.id.editTextOrigin);
-            EditText destin=(EditText)findViewById(R.id.editTextDestiny);
             origin.setText(ori.toString());
-            destin.setText(dest.toString());
+            destiny.setText(dest.toString());
 
         }
 
-        //Listener
+        //Spinner Listener
         spinnerBusOptions.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
@@ -115,6 +127,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         });
 
+        // Campo de texto Destino aciona a busca de rotas
+        destiny.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    hideSoftKeyboard();
+                    calcularRota();
+                    handled = true;
+                }
+                return handled;
+            }
+        });
 
     }
 
@@ -132,8 +157,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
+        //LatLng sydney = new LatLng(-34, 151);
         //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney2"));
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
@@ -167,9 +194,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
         LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
 
-        System.out.print("entrou");
-        mMap.addMarker(new MarkerOptions().position(latLng).title("Im here"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
+        mMap.addMarker(new MarkerOptions().position(latLng).title("Posição atual"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
     }
 
     @Override
@@ -187,17 +213,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    public void calcularRota(View view){
+    public void calcularRota() {
 
-
-        EditText origin=(EditText)findViewById(R.id.editTextOrigin);
-        EditText dest=(EditText)findViewById(R.id.editTextDestiny);
-
-        GetRouteAsyncTask getRouteAsyncTask = new GetRouteAsyncTask(mMap,spinnerAdapter);
-        getRouteAsyncTask.execute(origin.getText().toString(),dest.getText().toString());
-
-        //mMap.addPolyline(new PolylineOptions().addAll(PolyUtil.decode("b_xUbn~iFg@|Bw@bEoEaAy@Q_A`EOh@o@rCaAvE_AbEERzGxAvBd@dDt@~GzAnE~@nCl@j@NbFhAtBd@p@N~D|@tA\\RDfB`@t@NxIlBi@`CUjAeAzEcAtES`Ao@vCa@nBi@|BGZy@rDaAtEcArE[tAe@|B_AjEcArEaArEm@pCU~@gA~ECPw@vDEPk@lC{@xDg@hCWfAS~@w@rDrCn@x@RzCr@q@tCa@dBi@hC_A~DXFYGgCrIuCeCgCoBc@pBm@lCw@rDGT{@xDCPxIhBcAnEaAzEeBhEcAtEYpAQr@o@`C{Cl@aD\\]BFb@lArJN~@JdA^pCNRVjBXtBAn@Fd@r@zF^|C`@bD`@dD\\bDNPThB@FRzAAr@vAvKd@hDLTJz@@JJz@A`@@Lj@xEl@~EdAlIP|ALJPrA")));
-
+        progressBar.setVisibility(View.VISIBLE);
+        GetRouteAsyncTask getRouteAsyncTask = new GetRouteAsyncTask(mMap, spinnerAdapter, progressBar);
+        getRouteAsyncTask.execute(origin.getText().toString(), destiny.getText().toString());
 
     }
 
@@ -225,8 +245,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             } while (cursor.moveToNext());
         }
 
-        //IGUAL para ambos os casos = modificar o if para routes!=null caso usando DAO
-        if(routes.size()>0) {
+        //IGUAL para ambos os casos: modificar o if para routes!=null caso usando DAO
+        if(routes.size() > 0) {
             Intent i = new Intent();
             i.setAction("br.ufc.dc.dspm.action.history");
             i.setComponent(null);
@@ -234,26 +254,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             i.setComponent(null);
             startActivity(i);
         } else {
-            Toast.makeText(getApplicationContext(), "0 Notes", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Nenhuma rota salva.", Toast.LENGTH_SHORT).show();
         }
     }
 
+    /**
+     * Salva a rota selecionada (rotaAtual) no histórico
+     *
+     * @param view
+     */
     public void save(View view){
-    /*
-        if(rotaAtual !=null){
-            routeDAO.create(rotaAtual);
-
-            Toast.makeText(this,"A rota foi salva com sucesso",Toast.LENGTH_SHORT).show();
-        }
-        */
-        if(rotaAtual !=null){
+        if(rotaAtual != null){
 
             //USANDO DAO
             /*
             routeDAO.create(rotaAtual);
-
             Toast.makeText(this,"A rota foi salva com sucesso",Toast.LENGTH_SHORT).show();
             */
+
+            // Rescuperar origem e destino antes de salvar
+            rotaAtual.setOrigin(origin.getText().toString());
+            rotaAtual.setDestiny(destiny.getText().toString());
 
             //USANDO CONTENTPROVIDER
             ContentValues values = new ContentValues();
@@ -263,9 +284,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             values.put(RouteProvider.ROTA, rotaAtual.getRoute());
 
             Uri uri = getContentResolver().insert(RouteProvider.CONTENT_URI, values);
-            Toast.makeText(this,"A rota foi salva com sucesso",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"A rota foi salva com sucesso!",Toast.LENGTH_SHORT).show();
         }
 
+    }
+
+    /**
+     * Hides the soft keyboard
+     */
+    public void hideSoftKeyboard() {
+        if(getCurrentFocus()!=null) {
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
     }
 
 }

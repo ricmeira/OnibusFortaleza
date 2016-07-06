@@ -22,39 +22,34 @@
         android:hint="Origem"
         android:id="@+id/editTextOrigin"
         android:background="#ffffff"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
         android:minHeight="40dp"
         android:alpha="0.9"
-        android:text="Dom Luis 300"
-        android:layout_toLeftOf="@+id/buttonHistory"
-        android:layout_toStartOf="@+id/buttonHistory" />
+        android:singleLine="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toRightOf="@+id/buttonHistory"
+        android:layout_toEndOf="@+id/buttonHistory"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="5dp"
+        android:paddingLeft="5dp" />
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Destino"
-        android:layout_below="@id/editTextOrigin"
         android:id="@+id/editTextDestiny"
         android:background="#ffffff"
-        android:layout_marginLeft="10dp"
         android:minHeight="40dp"
         android:alpha="0.9"
-        android:text="Campus do Pici"
-        android:layout_toLeftOf="@+id/button"
-        android:layout_toStartOf="@+id/button" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="calcularRota"
-        android:text="Buscar Ônibus"
-        android:id="@+id/button"
-        android:layout_alignLeft="@+id/buttonHistory"
-        android:layout_alignStart="@+id/buttonHistory"
-        android:layout_alignBottom="@+id/editTextDestiny"
-        android:layout_below="@+id/editTextOrigin" />
+        android:singleLine="true"
+        android:imeOptions="actionSearch"
+        android:layout_below="@+id/editTextOrigin"
+        android:layout_toRightOf="@+id/buttonHistory"
+        android:layout_toEndOf="@+id/buttonHistory"
+        android:layout_marginRight="5dp"
+        android:paddingLeft="5dp" />
 
     <Spinner
         android:layout_width="fill_parent"
@@ -69,7 +64,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Save"
+        android:text="Salvar"
         android:id="@+id/buttonSave"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
@@ -79,11 +74,22 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Historico"
+        android:text="Histórico"
         android:onClick="history"
         android:id="@+id/buttonHistory"
-        android:layout_alignTop="@+id/editTextOrigin"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignBottom="@+id/editTextDestiny" />
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:indeterminate="false"
+        android:visibility="invisible" />
 
 </RelativeLayout>
+

@@ -15,10 +15,12 @@ import java.util.Iterator;
 import java.util.List;
 
 public class History extends AppCompatActivity {
+
     private RouteDAO routeDAO;
     ArrayList<Route> route=new ArrayList<>();
     ArrayAdapter<Route> tA;
     ListView listRoute;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +78,7 @@ public class History extends AppCompatActivity {
                         intent.putExtra("bus", r.getBusName());
                         intent.putExtra("route", r.getRoute());
                         startActivity(intent);
+                        finish();
                     }
                 });
             }

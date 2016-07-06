@@ -1,9 +1,12 @@
 package br.ufc.onibusfortaleza.onibusfortaleza;
 
 /**
+ * Objeto Rota exibido no mapa
+ *
  * Created by eduardo on 16-06-22.
  */
 public class Route {
+
     private int id;
     private String origin;
     private String destiny;
@@ -57,6 +60,9 @@ public class Route {
                 ", origin='" + origin + '\'' +
                 ", destiny='" + destiny + '\'' +
                 '}';*/
-        return getBusName();
+        if (origin != null)
+            return origin + " - " + destiny + "\n" + busName;
+
+        return busName;
     }
 }
